@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Inventario</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="container mt-4">
+
+<h1 class="mb-4"><i class="bi bi-box-seam me-2"></i>Gestión de Inventarios</h1>
+
+<!-- Panel de Reportes -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card text-white bg-primary shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="card-title">Valor Total del Inventario</h5>
+        <p class="card-text fs-3 fw-bold" th:text="'$' + ${totalValor}"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Buscador y Botones -->
+<div class="d-flex justify-content-between mb-3">
+  <form th:action="@{/productos}" method="get" class="d-flex gap-2">
+    <input type="text" name="buscar" class="form-control" placeholder="Buscar por nombre o categoría..." th:value="${buscar}">
+    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Buscar</button>
+  </form>
+  <div>
+    <a th:href="@{/categorias}" class="btn btn-secondary"><i class="bi bi-tags"></i> Gestionar Categorías</a>
+    <a th:href="@{/productos/nuevo}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nuevo Producto</a>
+  </div>
+</div>
+
+<!-- Tabla de Productos -->
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <table class="table table-hover table-striped align-middle mb-0">
+      <thead class="table-dark">
+      <tr>
+        <th class="ps-3">ID</th>
+        <th>Nombre</th>
+        <th>Categoría</th>
+        <th class="text-end">Precio</th>
+        <th class="text-center">Cantidad</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:if="${#lists.isEmpty(productos)}">
+        <td colspan="6" class="text-center py-5 text-muted">No hay productos registrados.</td>
+      </tr>
+      <tr th:each="p : ${productos}">
+        <td class="ps-3 fw-bold text-secondary" th:text="${p.id}"></td>
+        <td class="fw-semibold" th:text="${p.nombre}"></td>
+        <!-- ¡AQUÍ ESTÁ LA MAGIA DE LA RELACIÓN! -->
+        <td><span class="badge bg-light text-dark border" th:text="${p.categoria.nombre}"></span></td>
+        <td class="text-end fw-bold text-success" th:text="'$' + ${p.precio}"></td>
+        <td class="text-center"><span class="badge bg-primary rounded-pill" th:text="${p.cantidad}"></span></td>
+        <td class="text-center">
+          <div class="btn-group">
+            <a th:href="@{/productos/detalle/{id}(id=${p.id})}" class="btn btn-outline-info btn-sm"><i class="bi bi-eye"></i></a>
+            <a th:href="@{/productos/editar/{id}(id=${p.id})}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
+            <a th:href="@{/productos/eliminar/{id}(id=${p.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar?')"><i class="bi bi-trash"></i></a>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>
